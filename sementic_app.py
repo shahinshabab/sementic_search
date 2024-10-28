@@ -1,4 +1,8 @@
+import json
+import requests
+import pandas as pd
 import streamlit as st
+import plotly.express as px
 from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
 
@@ -8,6 +12,15 @@ index_name = "semantic-search"
 
 index = pc.Index(index_name)
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+
+# Load data from GitHub
+@st.cache_data
+def load_data():
+    url = "https://raw.githubusercontent.com/shahinshabab/sementic_search/main/train_dataset.json"
+    response = requests.get(url)
+    data = json.loads(response.text)
+    return data
+data = load_data()
 
 # Side panel for navigation
 st.sidebar.title("Navigation")
@@ -51,8 +64,49 @@ if page == "Search Page":
 
 elif page == "Dataset Page":
     st.title("Dataset Information")
-    # Add content or functionality related to the dataset here
-    st.write("Details about the dataset will be displayed here.")
+    # Dataset details
+    st.write("### Name: Google Natural Questions Dataset 2020")
+    st.write(
+        """
+        Natural Questions contains 307K training examples, 8K examples for development, and a further 8K examples for testing.
+        
+        In the paper, we demonstrate a human upper bound of 87% F1 on the long answer selection task, and 76% on the short answer selection task.
+        
+        We believe that matching human performance on this task will require significant progress in natural language understanding; we encourage you to help make this happen.
+        """
+    )
+    st.write("**Used Rows for Training:** 10,000 rows")
+    st.write("**Displayed Sample Size:** 2,000 rows")
+    # Convert the loaded data to a DataFrame for visualization
+    df = pd.json_normalize(data)
+    # Display a sample of the dataset
+    st.write("### Sample Data")
+    st.dataframe(df.head())
+    # Calculate relevant and irrelevant passage counts
+    relevant_count = df['passages'].apply(lambda x: sum(p['is_selected'] for p in x))
+    irrelevant_count = df['passages'].apply(lambda x: len(x) - sum(p['is_selected'] for p in x))
+    total_relevant = relevant_count.sum()
+    total_irrelevant = irrelevant_count.sum()
+    col1, col2 = st.columns(2)
+    with col1:
+        with st.container(border=True):
+            st.markdown("<h4>Total Relevant Passages</h4>", unsafe_allow_html=True)
+            st.markdown(f"<h4 style='text-align: center; color: green;'>{total_relevant}</h4>", unsafe_allow_html=True)
+    with col2:
+        with st.container(border=True):
+            st.markdown("<h4>Total Irrelevant Passages</h4>", unsafe_allow_html=True)
+            st.markdown(f"<h4 style='text-align: center; color: red;'>{total_irrelevant}</h4>", unsafe_allow_html=True)
+    # Calculate the passage counts per row
+    passage_counts = df['passages'].apply(len)
+    # Create a line graph for passage counts
+    fig_line = px.line(
+        x=range(1, len(passage_counts) + 1),  # Row numbers starting from 1
+        y=passage_counts.sort_values(),
+        title='Count of Passages per Row',
+        labels={'x': 'Row Number', 'y': 'Count of Passages'}
+    )
+    fig_line.update_layout(xaxis_title="", yaxis_title="Count of Passages")
+    st.plotly_chart(fig_line)
 
 elif page == "About Me":
     st.title("About Me")
