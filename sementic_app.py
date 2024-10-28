@@ -108,5 +108,11 @@ elif page == "Dataset Page":
 
 elif page == "About Me":
     st.title("About Me")
+    st.write("Hello! My name is Shahin Shabab.")
+    st.write("I am a student at Manipal University Jaipur, currently in my final year of Data Science and Engineering.")
+    st.write("I have a passion for coding and enjoy working on various projects.")
+    st.write("Feel free to connect with me:")
+    st.markdown("[GitHub](https://github.com/shahinshabab)")
+    st.markdown("[LinkedIn](https://www.linkedin.com/in/shahinshababp/)")
     st.write("This is a simple semantic search application built using Streamlit and Pinecone.")
     st.write("You can enter a query to search for related passages. Enjoy exploring!")
