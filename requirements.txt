@@ -2,3 +2,5 @@ streamlit==1.22.0
 pinecone-client==5.0.1
 sentence-transformers==2.2.2
 tensorflow==2.16.2
+huggingface-hub==0.15.1
+torch==1.13.0
