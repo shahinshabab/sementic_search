@@ -89,13 +89,11 @@ elif page == "Dataset Page":
     total_irrelevant = irrelevant_count.sum()
     col1, col2 = st.columns(2)
     with col1:
-        with st.container(border=True):
-            st.markdown("<h4>Total Relevant Passages</h4>", unsafe_allow_html=True)
-            st.markdown(f"<h4 style='text-align: center; color: green;'>{total_relevant}</h4>", unsafe_allow_html=True)
+        st.markdown("<h4>Total Relevant Passages</h4>", unsafe_allow_html=True)
+        st.markdown(f"<h4 style='text-align: center; color: green;'>{total_relevant}</h4>", unsafe_allow_html=True)
     with col2:
-        with st.container(border=True):
-            st.markdown("<h4>Total Irrelevant Passages</h4>", unsafe_allow_html=True)
-            st.markdown(f"<h4 style='text-align: center; color: red;'>{total_irrelevant}</h4>", unsafe_allow_html=True)
+        st.markdown("<h4>Total Irrelevant Passages</h4>", unsafe_allow_html=True)
+        st.markdown(f"<h4 style='text-align: center; color: red;'>{total_irrelevant}</h4>", unsafe_allow_html=True)
     # Calculate the passage counts per row
     passage_counts = df['passages'].apply(len)
     # Create a line graph for passage counts
